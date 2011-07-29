@@ -1,0 +1,124 @@
+<?php
+// $Id$
+
+/**
+* @file
+* Lets users add private annotations to nodes.
+*
+* Adds a text field when a node is displayed
+* so that authenticated users may make notes.
+*/
+
+/**
+* Implementation of hook_block().
+*/
+function dsignet_block($op = 'list', $delta = 0, $edit = array()) {
+	global $user;
+	switch ($op) {
+		case 'list':
+			$blocks[0]['info'] = t('User info');
+			$blocks[0]['cache'] = BLOCK_NO_CACHE;
+			return $blocks;
+		case 'view':
+      switch ($delta) {
+        case 0:
+        	if(arg(0) == 'user'){
+        		$block['content'] = dsignet_block_user_info(user_load(arg(1)));  // include page not found?
+        	}else $block['content'] = dsignet_block_user_info($user); // include page not found?
+          break;
+      }
+      return $block;
+	}
+}
+
+function dsignet_block_user_info($user){
+	profile_view_profile($user);
+	return theme('dsignet_user_info', $user);
+}
+
+/**
+* Implementation of hook_theme().
+*/
+function dsignet_theme(){
+	$file = 'dsignet.page.module';
+	return array(
+		'dsignet_user_info' => array(
+			'arguments' => array('user' => NULL),
+		),
+	);
+}
+
+function theme_dsignet_user_info($user){
+	global $base_url;
+	$picture = $user->picture ? $user->picture : 'sites/default/files/pictures/default_avatar.jpg';
+	$info = '<div id="user-info">';
+	$info .= '<h2 class="fulname">'.$user->profile_firstname. ' ' .$user->profile_lastname. '</h2>';
+	$info .= '<div class="avatar">'. theme_imagecache('avatar', $picture) .'</div>';
+	$info .= '<div class="links"><a href="'. $base_url .'/user/'. $user->uid .'/works">Works</a><br/><a href="#">About Author</a></div>';
+	$info .= '</div>';
+	return $info;
+}
+
+/**
+* @file
+* Play with the Form API.
+*/
+/**
+* Implementation of hook_menu().
+*/
+function dsignet_menu() {
+$items['formexample'] = array(
+'title' => 'View the form',
+'page callback' => 'dsignet_page',
+'access arguments' => array('access content'),
+);
+return $items;
+}
+/**
+* Menu callback.
+* Called when user goes to http://example.com/?q=formexample
+*/
+function dsignet_page() {
+$output = t('This page contains our example form.');
+// Return the HTML generated from the $form data structure.
+$output .= drupal_get_form('dsignet_nameform');
+return $output;
+}
+/**
+* Define a form.
+*/
+function dsignet_nameform() {
+$form['user_name'] = array(
+'#title' => t('Your Name'),
+'#type' => 'textfield',
+'#description' => t('Please enter your name.'),
+);
+$form['blinky'] = array(
+'#type' => 'markup',
+'#value' => '<blink>Hello!</blink>'
+);
+$form['submit'] = array(
+'#type' => 'submit',
+'#value' => t('Submit')
+);
+return $form;
+}
+/**
+* Validate the form.
+*/
+function dsignet_nameform_validate($form, &$form_state) {
+if ($form_state['values']['user_name'] == 'King Kong') {
+// We notify the form API that this field has failed validation.
+form_set_error('user_name',
+t('King Kong is not allowed to use this form.'));
+}
+}
+/**
+* Handle post-validation form submission.
+*/
+function dsignet_nameform_submit($form, &$form_state) {
+$name = $form_state['values']['user_name'];
+drupal_set_message(t('Thanks for filling out the form, %name',
+array('%name' => $name)));
+}
+?>

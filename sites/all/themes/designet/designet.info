@@ -1,0 +1,58 @@
+; $Id$
+; Name and core are required; all else is optional.
+name = Designet
+description = Designet private theme.
+screenshot = screenshot.png
+core = 6.x
+engine = phptemplate
+
+regions[left] = Left sidebar
+regions[right] = Right sidebar
+regions[content] = Content
+regions[header] = Header
+regions[footer] = Footer
+regions[partern1] = Partern 1
+regions[partern2] = Partern 2
+
+; Features not commented out here appear as checkboxes
+; on the theme configuration page for this theme.
+features[] = logo
+features[] = name
+features[] = slogan
+features[] = mission
+features[] = node_user_picture
+features[] = comment_user_picture
+features[] = search
+features[] = favicon
+features[] = primary_links
+features[] = secondary_links
+
+; Stylesheets can be declared here or, for more
+; control, be added by drupal_add_css() in template.php.
+; Add a stylesheet for media="all":
+stylesheets[all][] = style.css
+; Add a stylesheet for media="print":
+stylesheets[print][] = printable.css
+; Add a stylesheet for media="handheld":
+stylesheets[handheld][] = smallscreen.css
+; Add a stylesheet for media="screen, projection, tv":
+stylesheets[screen, projection, tv][] = screen.css
+; Override an existing Drupal stylesheet with our own
+; (in this case the forum module's stylesheet):
+;stylesheets[all][] = forum.css
+
+; JavaScript files can be declared here or, for more
+; control, be added by drupal_add_js() in template.php.
+; scripts.js is added automatically (just like style.css
+; is added automatically to stylesheets[]).
+scripts[] = custom.js
+
+; PHP version is rarely used; you might need it if your 
+; templates have code that uses very new PHP features.
+php = 5.2.0
+
+; Themes may be based on other themes; for example, they
+; may simply override some of the parent theme's CSS.
+; See the Minnelli theme at themes/garland/minnelli for
+; an example of a theme that does this in Drupal core.
+;base theme = garland

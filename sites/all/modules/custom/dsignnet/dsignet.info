@@ -1,0 +1,6 @@
+; $Id$
+name = Dsignet
+description = Dsignet private module.
+core = 6.x
+package = "Custom"
+php = 5.2
