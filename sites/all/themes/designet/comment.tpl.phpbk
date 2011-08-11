@@ -1,0 +1,60 @@
+<?php
+// $Id: comment.tpl.php,v 1.4 2008/11/18 14:52:21 jmburnz Exp $
+
+/**
+* @file comment.tpl.php
+* Default theme implementation for comments.
+*
+* These two variables are provided for context.
+* - $comment: Full comment object.
+* - $node: Node object the comments are attached to.
+*
+* @see template_preprocess_comment()
+* @see theme_comment()
+*/
+global $user;
+?>
+<div class="comment-wrap">
+<div class="comment <?php print $comment_classes; ?>">
+ <div class="comment-inner inner">
+
+				<?php if ($unpublished): ?>
+						<div class="unpublished"><?php print t('Unpublished'); ?></div>
+				<?php endif; ?>
+
+				<?php if ($picture): ?>
+						<div class="picture"><?php 
+							$comment->picture = $comment->picture ? $comment->picture : 'sites/default/files/no-image.jpg';
+							print theme_imagecache('profile_avatar',$comment->picture);  
+						?></div>
+				<?php endif; ?>
+
+				<?php if ($submitted): ?>
+						<div class="submitted">
+								<?php print 
+										t('!username said on @datetime',
+											array(
+												'!username' => theme('username', $comment),
+												'@datetime' => format_date($comment->timestamp, 'custom', 'l, F j, Y - h:i:a')
+											)
+										); ?>
+						</div>
+				<?php endif; ?>
+
+				<div class="comment-content">
+				  <?php print $content; ?>
+					 <?php if ($signature): ?>
+							 <div class="user-signature clear-block">
+									 <?php print $signature; ?>
+							 </div>
+					 <?php endif; ?>
+				</div>
+
+				<?php if ($links): ?>
+						<div class="links">
+								<?php print $links; ?>
+						</div>
+				<?php endif; ?>
+
+ </div></div>
+</div> <!-- /comment-inner, /comment -->

@@ -170,7 +170,7 @@
                 <?php print $help; ?>
                 <div id="upload-design">
                 <?php if($user->uid == arg(1)):                	 
-                	print node_add('design'); 
+                	//print node_add('design'); 
                 endif; ?>
                 </div>
                 <div class="clear-block">

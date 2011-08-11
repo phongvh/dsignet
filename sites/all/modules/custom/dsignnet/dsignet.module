@@ -45,6 +45,10 @@ function dsignet_theme(){
 		'dsignet_user_info' => array(
 			'arguments' => array('user' => NULL),
 		),
+		'comment_form' => array(
+			'arguments' => array('form' => NULL),
+			'template' => 'comment-form',
+		),
 	);
 }
 
@@ -60,65 +64,92 @@ function theme_dsignet_user_info($user){
 }
 
 /**
-* @file
-* Play with the Form API.
+* Implementation of hook_form_alter().
 */
+function dsignet_form_alter(&$form, $form_state, $form_id) { 
+	switch($form_id){   
+		case 'comment_form':
+			$form['comment_filter']['comment']['#title'] = "";
+      $form['comment_filter']['comment']['#resizable'] = false;
+      $form['comment_filter']['comment']['#rows'] = 1;
+      unset($form['comment_filter']['format']);
+      $form['#theme'] = 'comment_form';
+      //if(!isset($form['submit'])) $form['submit'] = $form['preview'];
+      //$form['submit']['#attributes'] = array('class' => 'form-submit-style');
+      $form['cancel'] = array(
+        '#type' => 'button',
+        '#value' => t('Cancel'),
+        '#weight' => 19,
+        //'#attributes' => array('class' => 'sd-uix-button')
+      );        
+      if(!user_access('post comments')){
+        $settings['comment']['access'] = t('<strong>!login</strong> or <strong>!signup</strong> now to post a comment!', array('!login' => l(t('Login'),'user/login'),'!signup' => l(t('Signup'),'user/register')));
+        drupal_add_js($settings, 'setting');
+      }
+    	break;
+  }
+}
+
+
+
 /**
 * Implementation of hook_menu().
 */
 function dsignet_menu() {
-$items['formexample'] = array(
-'title' => 'View the form',
-'page callback' => 'dsignet_page',
-'access arguments' => array('access content'),
-);
-return $items;
+	$items['formexample'] = array(
+		'title' => 'View the form',
+		'page callback' => 'dsignet_page',
+		'access arguments' => array('access content'),
+	);
+	return $items;
 }
 /**
 * Menu callback.
 * Called when user goes to http://example.com/?q=formexample
 */
 function dsignet_page() {
-$output = t('This page contains our example form.');
-// Return the HTML generated from the $form data structure.
-$output .= drupal_get_form('dsignet_nameform');
-return $output;
+	$output = t('This page contains our example form.');
+	// Return the HTML generated from the $form data structure.
+	$output .= drupal_get_form('dsignet_nameform');
+	return $output;
 }
 /**
 * Define a form.
 */
 function dsignet_nameform() {
-$form['user_name'] = array(
-'#title' => t('Your Name'),
-'#type' => 'textfield',
-'#description' => t('Please enter your name.'),
-);
-$form['blinky'] = array(
-'#type' => 'markup',
-'#value' => '<blink>Hello!</blink>'
-);
-$form['submit'] = array(
-'#type' => 'submit',
-'#value' => t('Submit')
-);
-return $form;
+	$form['user_name'] = array(
+		'#title' => t('Your Name'),
+		'#type' => 'textfield',
+		'#description' => t('Please enter your name.'),
+	);
+	$form['blinky'] = array(
+		'#type' => 'markup',
+		'#value' => '<blink>Hello!</blink>'
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Submit')
+	);
+	return $form;
 }
 /**
 * Validate the form.
 */
 function dsignet_nameform_validate($form, &$form_state) {
-if ($form_state['values']['user_name'] == 'King Kong') {
-// We notify the form API that this field has failed validation.
-form_set_error('user_name',
-t('King Kong is not allowed to use this form.'));
-}
+	if ($form_state['values']['user_name'] == 'King Kong') {
+	// We notify the form API that this field has failed validation.
+	form_set_error('user_name',
+	t('King Kong is not allowed to use this form.'));
+	}
 }
 /**
 * Handle post-validation form submission.
 */
 function dsignet_nameform_submit($form, &$form_state) {
-$name = $form_state['values']['user_name'];
-drupal_set_message(t('Thanks for filling out the form, %name',
-array('%name' => $name)));
+	$name = $form_state['values']['user_name'];
+	drupal_set_message(t('Thanks for filling out the form, %name',
+	array('%name' => $name)));
 }
+
+
 ?>
